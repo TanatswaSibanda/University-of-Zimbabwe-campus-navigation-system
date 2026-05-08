@@ -1,19 +1,16 @@
-
-
 const popularPlaces = [
-  "Admin",
+  "Admin Block",
   "Main Library",
   "Student Union",
-  "Chemistry Building",
-  "Maths",
-  "Vet Science"
+  "Faculty of Science",
+  "Faculty of Vet Science",
+  "Computer Centre"
 ];
 
 function PopularVenues({ onVenueClick }) {
   return (
     <div className="popular-venues">
       <h3>Popular Venues</h3>
-
       {popularPlaces.map((place) => (
         <button
           key={place}
