@@ -1,8 +1,25 @@
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import { useState } from "react";
 import { db } from "./firebase";
 import { collection, addDoc } from "firebase/firestore";
 
+
 import Map from "./components/Map";
+import NavigationPage from "./components/NavigationPage";
+
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Map />} />
+        <Route path="/navigation" element={<NavigationPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
 
 function App() {
 
@@ -244,3 +261,4 @@ function App() {
 }
 
 export default App;
+

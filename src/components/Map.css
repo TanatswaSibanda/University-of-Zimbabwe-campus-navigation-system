@@ -2,21 +2,27 @@
     box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
     margin: 0;
     padding: 0;
     min-height: 100%;
     width: 100%;
     overflow-y: auto;
     background-color: #1a3c8e;
+
+
     font-family: Arial, sans-serif;
+
 }
 
 /* Main Map Container */
 .map-container {
+
+    height: 100vh;
+
     position: relative;
     height: 500px;
+
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -35,6 +41,7 @@ body {
     gap: 15px;
     color: white;
     z-index: 10;
+    flex-shrink: 0;
 }
 
 .header img {
@@ -47,15 +54,82 @@ body {
     font-size: 1.1rem;
 }
 
+
+/* Content layout — sidebar + map side by side */
+.content-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* LEFT SIDEBAR */
+.popular-venues {
+    width: 250px;
+    min-width: 250px;
+    background: #f5f5f5;
+    padding: 20px;
+    border-right: 2px solid #ddd;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.popular-venues h3 {
+    margin: 0 0 15px 0;
+    color: #0b2e83;
+    font-size: 1rem;
+    text-transform: uppercase;
+}
+
+.popular-venues h2 {
+    margin: 0 0 8px 0;
+    color: #0b2e83;
+    font-size: 1rem;
+}
+
+/* Venue + Room buttons */
+.venue-btn,
+.venue-button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 8px;
+    border: none;
+    background: #0b2e83;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+.venue-btn:hover,
+.venue-button:hover {
+    background: #1746b0;
+}
+
+/* RIGHT MAP SECTION */
+.map-section {
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+}
+
+/* Search bar floats over the map */
+.search-container {
+    position: absolute;
+    top: 15px;
+
 /* Search Bar */
 .search-container {
     position: absolute;
     top: 90px;
+
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     z-index: 1000;
-    width: 90%;
+    width: 80%;
     max-width: 450px;
 }
 
@@ -68,6 +142,11 @@ body {
     font-size: 14px;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
+    outline: none;
+}
+
+.search-bar::placeholder {
+    color: #a3c9f8;
 }
 
 .search-bar::placeholder {
@@ -77,18 +156,199 @@ body {
 .search-button {
     background-color: #a3c9f8;
     border: none;
-    padding: 0 15px;
+    padding: 0 18px;
     cursor: pointer;
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
+
+    font-weight: 600;
+    color: #0b2e83;
+}
+
+.search-button:hover {
+    background-color: #7ab3f0;
+}
+
+/* Leaflet map fills the rest */
+
 }
 
 /* Leaflet Map */
+ main
 .leaflet-container {
-    flex-grow: 1;
+    flex: 1;
     width: 100%;
     height: 100% !important;
 }
+
+
+/* Move zoom controls to bottom-right */
+.leaflet-top.leaflet-left {
+    top: unset !important;
+    left: unset !important;
+    bottom: 30px !important;
+    right: 15px !important;
+}
+
+/* MODAL */
+.custom-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.popup-box {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.popup-box h3 {
+    margin: 0 0 20px 0;
+    color: #0b2e83;
+}
+
+.popup-box button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #0b2e83;
+    color: white;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.popup-box button:hover {
+    background: #1746b0;
+}
+
+/* Selecting start point hint */
+.selecting-hint {
+    background: #fff3cd;
+    border-bottom: 1px solid #ffc107;
+    color: #856404;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+    z-index: 1000;
+    flex-shrink: 0;
+}
+
+/* NAVIGATION PAGE */
+.back-button {
+    background: transparent;
+    border: 2px solid #1a3a6b;
+    color: #1a3a6b;
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.back-button:hover {
+    background: #1a3a6b;
+    color: white;
+}
+
+.rooms-subtitle {
+    font-size: 0.82rem;
+    color: #666;
+    margin: 0.2rem 0 0.8rem 0;
+}
+
+.room-description {
+    background: #eef3fb;
+    border-left: 4px solid #1a56db;
+    color: #1a3a6b;
+    font-size: 0.85rem;
+    padding: 0.6rem 0.8rem;
+    margin: 0.2rem 0 0.5rem 0;
+    border-radius: 0 6px 6px 0;
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.destination-banner {
+    background: #1a3a6b;
+    color: white;
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    text-align: center;
+    flex-shrink: 0;
+    z-index: 10;
+}
+/* Wrapper so dropdown positions relative to search bar */
+.search-wrapper {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 450px;
+    z-index: 1000;
+}
+
+/* Move search-container inside wrapper — remove its absolute positioning */
+.search-wrapper .search-container {
+    position: static;
+    top: unset;
+    left: unset;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Dropdown list */
+.suggestions-dropdown {
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    overflow: hidden;
+}
+
+.suggestion-item {
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #1a3a6b;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background: #eef3fb;
+}
+
+/* Error message below search bar */
+.search-error {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 6px 14px;
+    border-radius: 0 0 6px 6px;
+    font-size: 0.85rem;
 
 /* Form Section */
 .form-container {
@@ -123,4 +383,5 @@ body {
 
 .form-button:hover {
     background-color: #163373;
+
 }
