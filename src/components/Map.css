@@ -1,41 +1,34 @@
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 html,
 body {
     margin: 0;
     padding: 0;
-    min-height: 100%;
+    height: 100%;
     width: 100%;
-    overflow-y: auto;
+    overflow: hidden;
     background-color: #1a3c8e;
-
-
-    font-family: Arial, sans-serif;
-
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Main Map Container */
+/* Main Map Container - FULL SCREEN */
 .map-container {
-
     height: 100vh;
-
-    position: relative;
-    height: 500px;
-
     width: 100%;
     display: flex;
     flex-direction: column;
-    border: 8px solid #1a3c8e;
-    margin-bottom: 30px;
+    background-color: #1a3c8e;
 }
 
 /* Header */
 .header {
-    background-color: #1a3c8e;
-    border-bottom: 3px solid #3182ce;
-    padding: 12px;
+    background: linear-gradient(135deg, #0b2e83 0%, #1a3c8e 100%);
+    border-bottom: 2px solid #3182ce;
+    padding: 12px 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -43,6 +36,7 @@ body {
     color: white;
     z-index: 10;
     flex-shrink: 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .header img {
@@ -52,59 +46,72 @@ body {
 .header h2 {
     margin: 0;
     text-transform: uppercase;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
 }
-
 
 /* Content layout — sidebar + map side by side */
 .content-layout {
     display: flex;
     flex: 1;
     overflow: hidden;
+    min-height: 0;
 }
 
-/* LEFT SIDEBAR */
+/* LEFT SIDEBAR - Improved */
 .popular-venues {
-    width: 250px;
-    min-width: 250px;
-    background: #f5f5f5;
+    width: 300px;
+    min-width: 300px;
+    background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
     padding: 20px;
-    border-right: 2px solid #ddd;
+    border-right: 1px solid #dee2e6;
     overflow-y: auto;
     z-index: 10;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
 }
 
 .popular-venues h3 {
     margin: 0 0 15px 0;
     color: #0b2e83;
-    font-size: 1rem;
+    font-size: 1.1rem;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #0b2e83;
+    padding-bottom: 8px;
 }
 
 .popular-venues h2 {
-    margin: 0 0 8px 0;
+    margin: 15px 0 5px 0;
     color: #0b2e83;
-    font-size: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
 }
 
 /* Venue + Room buttons */
 .venue-btn,
 .venue-button {
     width: 100%;
-    padding: 10px;
+    padding: 12px 15px;
     margin-bottom: 8px;
     border: none;
-    background: #0b2e83;
-    color: white;
+    background: white;
+    color: #0b2e83;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 0.9rem;
     text-align: left;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .venue-btn:hover,
 .venue-button:hover {
-    background: #1746b0;
+    background: #0b2e83;
+    color: white;
+    transform: translateX(3px);
+    border-color: #0b2e83;
 }
 
 /* RIGHT MAP SECTION */
@@ -113,81 +120,144 @@ body {
     position: relative;
     display: flex;
     flex-direction: column;
-    overflow: visible;
+    overflow: hidden;
 }
 
-/* Search bar floats over the map */
-.search-container {
+/* Search Wrapper - Centered at top */
+.search-wrapper {
     position: absolute;
-    top: 15px;
-
-    /* Search Bar */
-    .search-container {
-        position: absolute;
-        top: 90px;
-
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        z-index: 1000;
-        width: 80%;
-        max-width: 450px;
-    }
-
-    .search-bar {
-        flex-grow: 1;
-        background-color: #1a3c8e;
-        border: none;
-        padding: 12px 15px;
-        color: white;
-        font-size: 14px;
-        border-top-left-radius: 4px;
-        border-bottom-left-radius: 4px;
-        outline: none;
-    }
-
-    .search-bar::placeholder {
-        color: #a3c9f8;
-    }
-
-    .search-bar::placeholder {
-        color: #ddd;
-    }
-
-    .search-button {
-        background-color: #a3c9f8;
-        border: none;
-        padding: 0 18px;
-        cursor: pointer;
-        border-top-right-radius: 4px;
-        border-bottom-right-radius: 4px;
-
-        font-weight: 600;
-        color: #0b2e83;
-    }
-
-    .search-button:hover {
-        background-color: #7ab3f0;
-    }
-
-    /* Leaflet map fills the rest */
-
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 550px;
+    z-index: 1000;
 }
 
-/* Leaflet Map */
-main .leaflet-container {
+/* Search Container - Both search bars will look the same */
+.search-container,
+.room-search-container {
+    display: flex;
+    width: 100%;
+    background: white;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.search-bar,
+.room-search-bar {
     flex: 1;
+    height: 50px;
+    border: none;
+    padding: 0 20px;
+    font-size: 15px;
+    outline: none;
+    background: white;
+    color: #333;
+}
+
+.search-bar::placeholder,
+.room-search-bar::placeholder {
+    color: #999;
+    font-weight: 400;
+}
+
+.search-button,
+.room-search-button {
+    height: 50px;
+    padding: 0 25px;
+    background: #0b2e83;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background 0.2s ease;
+    letter-spacing: 0.5px;
+}
+
+.search-button:hover,
+.room-search-button:hover {
+    background: #1a3d91;
+}
+
+/* Room Search Section - Same as building search */
+.room-search-section {
+    position: relative;
+    width: 100%;
+    margin-top: 0;
+}
+
+/* Suggestions Dropdown */
+.suggestions-dropdown,
+.room-results-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    max-height: 350px;
+    overflow-y: auto;
+    margin-top: 5px;
+}
+
+.suggestion-item,
+.room-result-item {
+    padding: 12px 18px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.suggestion-item:hover,
+.room-result-item:hover {
+    background: #f0f4ff;
+}
+
+.suggestion-item.building-suggestion {
+    font-weight: 600;
+    color: #0b2e83;
+}
+
+.suggestion-item.venue-suggestion {
+    color: #333;
+}
+
+.suggestion-building {
+    font-size: 11px;
+    color: #888;
+    margin-left: 8px;
+}
+
+/* Error message */
+.search-error {
+    background: #fee2e2;
+    color: #dc2626;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-top: 5px;
+    text-align: center;
+}
+
+/* Leaflet Map - Full height */
+.leaflet-container {
     width: 100%;
     height: 100% !important;
+    background-color: #e8f0fe;
 }
-
 
 /* Move zoom controls to bottom-right */
 .leaflet-top.leaflet-left {
     top: unset !important;
     left: unset !important;
-    bottom: 30px !important;
-    right: 15px !important;
+    bottom: 20px !important;
+    right: 20px !important;
 }
 
 /* MODAL */
@@ -197,88 +267,103 @@ main .leaflet-container {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
+    backdrop-filter: blur(3px);
 }
 
 .popup-box {
     background: white;
     padding: 30px;
-    border-radius: 10px;
-    width: 300px;
+    border-radius: 16px;
+    width: 350px;
     text-align: center;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .popup-box h3 {
     margin: 0 0 20px 0;
     color: #0b2e83;
+    font-size: 1.4rem;
 }
 
 .popup-box button {
     width: 100%;
-    margin-top: 10px;
+    margin-top: 12px;
     padding: 12px;
     border: none;
-    border-radius: 6px;
+    border-radius: 10px;
     background: #0b2e83;
     color: white;
     font-size: 0.95rem;
     cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
 }
 
 .popup-box button:hover {
-    background: #1746b0;
+    background: #1a3d91;
 }
 
 /* Selecting start point hint */
 .selecting-hint {
     background: #fff3cd;
-    border-bottom: 1px solid #ffc107;
+    border-bottom: 2px solid #ffc107;
     color: #856404;
-    padding: 0.6rem 1rem;
+    padding: 10px 16px;
     font-size: 0.9rem;
     text-align: center;
     z-index: 1000;
     flex-shrink: 0;
+    font-weight: 500;
 }
 
-/* NAVIGATION PAGE */
+/* NAVIGATION PAGE BUTTONS */
 .back-button {
     background: transparent;
-    border: 2px solid #1a3a6b;
-    color: #1a3a6b;
-    padding: 0.4rem 1rem;
-    border-radius: 6px;
+    border: 2px solid #0b2e83;
+    color: #0b2e83;
+    padding: 10px 16px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    transition: all 0.2s;
 }
 
 .back-button:hover {
-    background: #1a3a6b;
+    background: #0b2e83;
     color: white;
 }
 
-.rooms-subtitle {
-    font-size: 0.82rem;
+.venues-subtitle {
+    font-size: 0.85rem;
     color: #666;
-    margin: 0.2rem 0 0.8rem 0;
+    margin: 5px 0 12px 0;
 }
 
+.venue-description,
 .room-description {
     background: #eef3fb;
-    border-left: 4px solid #1a56db;
+    border-left: 4px solid #0b2e83;
     color: #1a3a6b;
     font-size: 0.85rem;
-    padding: 0.6rem 0.8rem;
-    margin: 0.2rem 0 0.5rem 0;
-    border-radius: 0 6px 6px 0;
+    padding: 8px 12px;
+    margin: 5px 0 10px 0;
+    border-radius: 0 8px 8px 0;
     animation: slideDown 0.2s ease;
+}
+
+.venue-location {
+    background: #e8f0fe;
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin: 10px 0;
+    font-size: 0.9rem;
 }
 
 @keyframes slideDown {
@@ -294,85 +379,31 @@ main .leaflet-container {
 }
 
 .destination-banner {
-    background: #1a3a6b;
+    background: #0b2e83;
     color: white;
-    padding: 0.6rem 1rem;
-    font-size: 0.95rem;
+    padding: 12px 16px;
+    font-size: 1rem;
     text-align: center;
     flex-shrink: 0;
     z-index: 10;
-}
-
-/* Wrapper so dropdown positions relative to search bar */
-.search-wrapper {
-    position: absolute;
-    top: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    max-width: 450px;
-    z-index: 1000;
-}
-
-/* Move search-container inside wrapper — remove its absolute positioning */
-.search-wrapper .search-container {
-    position: static;
-    top: unset;
-    left: unset;
-    transform: none;
-    width: 100%;
-    max-width: 100%;
-}
-
-/* Dropdown list */
-.suggestions-dropdown {
-    background: white;
-    border: 1px solid #ddd;
-    border-top: none;
-    border-radius: 0 0 6px 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
-}
-
-.suggestion-item {
-    padding: 10px 14px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: #1a3a6b;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.suggestion-item:last-child {
-    border-bottom: none;
-}
-
-.suggestion-item:hover {
-    background: #eef3fb;
-}
-
-/* Error message below search bar */
-.search-error {
-    background: #fee2e2;
-    color: #991b1b;
-    padding: 6px 14px;
-    border-radius: 0 0 6px 6px;
-    font-size: 0.85rem;
+    font-weight: 500;
 }
 
 /* Shortest Path Card */
 .shortest-path-card {
-    background: linear-gradient(135deg, #1a3a6b 0%, #0b2e83 100%);
+    background: linear-gradient(135deg, #0b2e83 0%, #1a4a9e 100%);
     border-radius: 12px;
-    padding: 15px;
+    padding: 16px;
     margin: 15px 0;
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .shortest-path-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-weight: bold;
     font-size: 16px;
 }
@@ -382,30 +413,27 @@ main .leaflet-container {
     border: none;
     color: white;
     cursor: pointer;
-    padding: 4px 8px;
+    padding: 4px 10px;
     border-radius: 20px;
     font-size: 14px;
 }
 
-.shortest-path-header button:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
 .shortest-path-details {
     display: flex;
-    gap: 15px;
+    gap: 12px;
     margin-bottom: 12px;
+    flex-wrap: wrap;
 }
 
 .path-stat {
     background: rgba(255, 255, 255, 0.2);
-    padding: 6px 12px;
+    padding: 5px 12px;
     border-radius: 20px;
     font-size: 13px;
 }
 
 .shortest-path-route {
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
     padding-top: 10px;
 }
 
@@ -455,7 +483,7 @@ main .leaflet-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px;
+    padding: 16px 20px;
     border-bottom: 1px solid #eee;
     background: #f8f9fa;
 }
@@ -488,196 +516,22 @@ main .leaflet-container {
     gap: 10px;
 }
 
-.favorite-info {
-    flex: 1;
-}
-
-.favorite-title {
-    font-weight: 600;
-    color: #0b2e83;
-    font-size: 14px;
-}
-
-.favorite-subtitle {
-    font-size: 12px;
-    color: #666;
-    margin-top: 4px;
-}
-
-.favorite-date {
-    font-size: 10px;
-    color: #999;
-    margin-top: 4px;
-}
-
-.favorite-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.favorite-actions button {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-}
-
 .favorite-actions button:first-child {
     background: #0b2e83;
     color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
 .favorite-actions button:last-child {
     background: #dc3545;
     color: white;
-}
-
-/* Form Section */
-.form-container {
-    background-color: white;
-    padding: 20px;
-    margin: 20px;
-    border-radius: 10px;
-}
-
-.form-container h2 {
-    margin-top: 0;
-    color: #1a3c8e;
-}
-
-.form-input {
-    width: 100%;
-    max-width: 400px;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.form-button {
-    background-color: #1a3c8e;
-    color: white;
-    padding: 10px 20px;
     border: none;
-    border-radius: 5px;
+    padding: 6px 12px;
+    border-radius: 6px;
     cursor: pointer;
-}
-
-.form-button:hover {
-    background-color: #163373;
-
-}
-
-/* Room Search Styles */
-.room-search-section {
-    margin-top: 15px;
-    width: 100%;
-}
-
-.room-search-container {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-}
-
-.room-search-bar {
-    flex: 1;
-    padding: 12px 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: border-color 0.3s;
-}
-
-.room-search-bar:focus {
-    outline: none;
-    border-color: #0b2e83;
-}
-
-.room-search-button {
-    padding: 12px 24px;
-    background: #0b2e83;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.3s;
-}
-
-.room-search-button:hover {
-    background: #1a3d91;
-}
-
-.room-results-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    max-height: 300px;
-    overflow-y: auto;
-    margin-top: 5px;
-}
-
-.room-results-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 15px;
-    background: #f5f5f5;
-    border-bottom: 1px solid #e0e0e0;
-    font-weight: 600;
-}
-
-.room-results-header button {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    color: #666;
-}
-
-.room-result-item {
-    display: flex;
-    gap: 12px;
-    padding: 12px 15px;
-    border-bottom: 1px solid #f0f0f0;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.room-result-item:hover {
-    background: #f9f9f9;
-}
-
-.room-icon {
-    font-size: 20px;
-}
-
-.room-info {
-    flex: 1;
-}
-
-.room-name {
-    font-weight: 600;
-    color: #0b2e83;
-    margin-bottom: 4px;
-}
-
-.room-building {
-    font-size: 12px;
-    color: #666;
-}
-
-.room-description {
-    font-size: 12px;
-    color: #888;
-    margin-top: 4px;
 }
 
 /* Building Selector Modal */
@@ -697,111 +551,51 @@ main .leaflet-container {
 .building-selector-modal {
     background: white;
     padding: 30px;
-    border-radius: 12px;
+    border-radius: 16px;
     text-align: center;
     min-width: 350px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
-.building-selector-modal h3 {
-    color: #0b2e83;
-    margin-bottom: 8px;
-}
-
-.modal-subtitle {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 20px;
-}
-
 .building-dropdown {
     width: 100%;
     padding: 12px;
-    margin: 10px 0 20px;
+    margin: 15px 0;
     font-size: 16px;
-    border-radius: 8px;
+    border-radius: 10px;
     border: 1px solid #ccc;
 }
 
-.cancel-button {
-    width: 100%;
-    padding: 10px;
-    background: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    cursor: pointer;
+/* Spinner */
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid white;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
 }
 
-/* Venue Popup */
-.venue-popup {
-    min-width: 200px;
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-.venue-popup h3 {
-    color: #0b2e83;
-    margin-bottom: 10px;
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 6px;
 }
 
-.rooms-list {
-    margin: 5px 0;
-    padding-left: 20px;
-    font-size: 12px;
+::-webkit-scrollbar-track {
+    background: #e9ecef;
 }
 
-.rooms-list li {
-    margin: 3px 0;
-}
-
-/* Navigation Modal */
-.selected-room-info {
-    background: #e8f0fe;
-    padding: 10px;
-    border-radius: 8px;
-    margin: 10px 0;
-}
-
-.nav-option-btn {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.current-location {
+::-webkit-scrollbar-thumb {
     background: #0b2e83;
-    color: white;
+    border-radius: 3px;
 }
 
-.select-start {
-    background: white;
-    color: #0b2e83;
-    border: 2px solid #0b2e83;
-}
-
-.cancel-btn {
-    width: 100%;
-    padding: 10px;
-    background: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.location-error {
-    background: #fee2e2;
-    color: #991b1b;
-    padding: 8px 10px;
-    border-radius: 6px;
-    font-size: 0.82rem;
-    margin-top: 8px;
-    text-align: left;
-}
-
-.search-wrapper {
-    position: relative;
-    margin-bottom: 15px;
+::-webkit-scrollbar-thumb:hover {
+    background: #1a3d91;
 }

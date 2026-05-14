@@ -6,10 +6,9 @@ import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import logo from "../assets/images/University_of_Zimbabwe_LOGO.png";
 import "./Map.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import PopularVenues from "./PopularVenues";
 import venues from "./venues";
-//import { loadAllBuildings } from "../services/firebaseService";
 import { useNavigate } from "react-router-dom";
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -128,17 +127,12 @@ export default function Map() {
     const [locating, setLocating] = useState(false);
     const [showBuildingSelector, setShowBuildingSelector] = useState(false);
     const [selectedStartBuilding, setSelectedStartBuilding] = useState("");
-    const [roomSearchQuery, setRoomSearchQuery] = useState("");
-    const [roomSearchResults, setRoomSearchResults] = useState([]);
-    const [showRoomResults, setShowRoomResults] = useState(false);
     const navigate = useNavigate();
 
     const handleVenueClick = (venueName, isVenueOnly = false, parentBuilding = null) => {
-        // First try to find if it's a specific venue (room)
         let destination = null;
 
         if (isVenueOnly && parentBuilding) {
-            // User selected a specific venue inside a building
             const building = venues.find(v => v.name === parentBuilding);
             if (building) {
                 const venue = building.venues?.find(v => v.name === venueName);
@@ -153,7 +147,6 @@ export default function Map() {
                 }
             }
         } else {
-            // First try to find as a building
             let building = venues.find(v => v.name === venueName);
             if (building) {
                 destination = {
@@ -163,7 +156,6 @@ export default function Map() {
                     building: building
                 };
             } else {
-                // Then try to find as a venue inside any building
                 for (const building of venues) {
                     const venue = building.venues?.find(v => v.name === venueName);
                     if (venue) {
@@ -185,6 +177,7 @@ export default function Map() {
         setSelectedVenue(destination);
         setShowPopup(true);
     };
+
     const handleInputChange = (e) => {
         const value = e.target.value;
         setSearchQuery(value);
@@ -198,7 +191,6 @@ export default function Map() {
 
         const matches = [];
 
-        // Search buildings
         venues.forEach((building) => {
             if (building.name.toLowerCase().includes(value.toLowerCase())) {
                 matches.push({
@@ -207,7 +199,6 @@ export default function Map() {
                     building: building.name
                 });
             }
-            // Search venues inside building
             building.venues?.forEach((venue) => {
                 if (venue.name.toLowerCase().includes(value.toLowerCase())) {
                     matches.push({
@@ -243,18 +234,32 @@ export default function Map() {
         setShowSuggestions(false);
 
         if (searchQuery.trim() === "") {
-            setSearchError("Please enter a building name to search.");
+            setSearchError("Please enter a building or room name to search.");
             return;
         }
 
-        const match = venues.find((v) =>
+        // First try as building
+        let match = venues.find((v) =>
             v.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
+
         if (match) {
             handleVenueClick(match.name);
-        } else {
-            setSearchError(`No building found for "${searchQuery}"`);
+            return;
         }
+
+        // Then try as venue inside any building
+        for (const building of venues) {
+            const venueMatch = building.venues?.find(v =>
+                v.name.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            if (venueMatch) {
+                handleVenueClick(venueMatch.name, true, building.name);
+                return;
+            }
+        }
+
+        setSearchError(`No building or room found for "${searchQuery}"`);
     };
 
     const handleUseCurrentLocation = () => {
@@ -327,65 +332,8 @@ export default function Map() {
         });
     };
 
-    const handleRoomSearch = () => {
-        if (!roomSearchQuery.trim()) {
-            setRoomSearchResults([]);
-            setShowRoomResults(false);
-            return;
-        }
-
-        const results = [];
-        venues.forEach(venue => {
-            if (venue.rooms && venue.rooms.length > 0) {
-                venue.rooms.forEach(room => {
-                    if (room.name.toLowerCase().includes(roomSearchQuery.toLowerCase()) ||
-                        (room.description && room.description.toLowerCase().includes(roomSearchQuery.toLowerCase()))) {
-                        results.push({
-                            building: venue.name,
-                            buildingPosition: venue.position,
-                            room: room,
-                            venue: venue
-                        });
-                    }
-                });
-            }
-        });
-
-        setRoomSearchResults(results);
-        setShowRoomResults(results.length > 0);
-
-        if (results.length === 0 && roomSearchQuery.trim() !== "") {
-            alert(`No room found matching "${roomSearchQuery}"`);
-        }
-    };
-
-    const handleRoomResultClick = (result) => {
-        setSelectedVenue({
-            name: result.building,
-            position: result.buildingPosition,
-            room: result.room,
-            venue: result.venue
-        });
-        setRoomSearchResults([]);
-        setShowRoomResults(false);
-        setRoomSearchQuery("");
-        setShowPopup(true);
-    };
-    /*useEffect(() => {
-        const loadBuildingsFromFirebase = async () => {
-            const buildings = await loadAllBuildings();
-            if (buildings.length > 0) {
-                // Option 1: Use Firebase data instead of static venues
-                console.log("Loaded buildings:", buildings);
-                // You can merge with static data or replace entirely
-            }
-        };
-        loadBuildingsFromFirebase();
-    }, []);*/
-
     return (
         <div className="map-container">
-            {/* HEADER */}
             <div className="header">
                 <img src={logo} alt="University of Zimbabwe Logo" />
                 <h2>University of Zimbabwe Campus Navigator</h2>
@@ -401,14 +349,13 @@ export default function Map() {
                         </div>
                     )}
 
-                    {/* SEARCH WRAPPER */}
+                    {/* SINGLE SEARCH BAR - Searches Buildings AND Venues */}
                     <div className="search-wrapper">
-                        {/* BUILDING SEARCH */}
                         <div className="search-container">
                             <input
                                 className="search-bar"
                                 type="text"
-                                placeholder=" Search for a building e.g. Beit Hall"
+                                placeholder="🔍 Search for a building or room... (e.g., 'Great Hall', 'Chemistry Lab')"
                                 value={searchQuery}
                                 onChange={handleInputChange}
                                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -423,13 +370,16 @@ export default function Map() {
 
                         {showSuggestions && (
                             <div className="suggestions-dropdown">
-                                {suggestions.map((venue, index) => (
+                                {suggestions.map((item, index) => (
                                     <div
                                         key={index}
-                                        className="suggestion-item"
-                                        onMouseDown={() => handleSuggestionClick(venue)}
+                                        className={`suggestion-item ${item.type === 'venue' ? 'venue-suggestion' : 'building-suggestion'}`}
+                                        onMouseDown={() => handleSuggestionClick(item.name, item.type, item.parentBuilding)}
                                     >
-                                        🏛️ {venue.name}
+                                        {item.type === 'venue' ? '🚪' : '🏛️'} {item.name}
+                                        {item.type === 'venue' && (
+                                            <span className="suggestion-building"> (in {item.building})</span>
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -440,55 +390,8 @@ export default function Map() {
                                 ⚠️ {searchError}
                             </div>
                         )}
-
-                        {/* ROOM SEARCH SECTION */}
-                        <div className="room-search-section">
-                            <div className="room-search-container">
-                                <input
-                                    className="room-search-bar"
-                                    type="text"
-                                    placeholder=" Search for a specific room (e.g., 'Chemistry Lab')"
-                                    value={roomSearchQuery}
-                                    onChange={(e) => setRoomSearchQuery(e.target.value)}
-                                    onKeyDown={(e) => e.key === "Enter" && handleRoomSearch()}
-                                    autoComplete="off"
-                                />
-                                <button className="room-search-button" onClick={handleRoomSearch}>
-                                    Find Room
-                                </button>
-                            </div>
-
-                            {showRoomResults && roomSearchResults.length > 0 && (
-                                <div className="room-results-dropdown">
-                                    <div className="room-results-header">
-                                        <span>🎯 Found {roomSearchResults.length} room(s):</span>
-                                        <button onClick={() => {
-                                            setShowRoomResults(false);
-                                            setRoomSearchResults([]);
-                                        }}>✕</button>
-                                    </div>
-                                    {roomSearchResults.map((result, idx) => (
-                                        <div
-                                            key={idx}
-                                            className="room-result-item"
-                                            onClick={() => handleRoomResultClick(result)}
-                                        >
-                                            <div className="room-icon">🚪</div>
-                                            <div className="room-info">
-                                                <div className="room-name">{result.room.name}</div>
-                                                <div className="room-building">📍 {result.building}</div>
-                                                {result.room.description && (
-                                                    <div className="room-description">{result.room.description}</div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
                     </div>
 
-                    {/* MAP */}
                     <MapContainer
                         center={universityOfZimbabwe}
                         zoom={17}
@@ -504,18 +407,17 @@ export default function Map() {
                                 <Popup>
                                     <div className="venue-popup">
                                         <h3>{venue.name}</h3>
-                                        {venue.rooms && venue.rooms.length > 0 && (
+                                        {venue.venues && venue.venues.length > 0 && (
                                             <>
-                                                <p><strong>📚 Rooms/Facilities:</strong></p>
+                                                <p><strong>📚 Venues/Facilities:</strong></p>
                                                 <ul className="rooms-list">
-                                                    {venue.rooms.slice(0, 5).map((room, roomIndex) => (
-                                                        <li key={roomIndex}>
-                                                            <strong>{room.name}</strong>
-                                                            {room.description && <span> - {room.description}</span>}
+                                                    {venue.venues.slice(0, 5).map((venueItem, venueIndex) => (
+                                                        <li key={venueIndex}>
+                                                            <strong>{venueItem.name}</strong>
                                                         </li>
                                                     ))}
-                                                    {venue.rooms.length > 5 && (
-                                                        <li>+ {venue.rooms.length - 5} more...</li>
+                                                    {venue.venues.length > 5 && (
+                                                        <li>+ {venue.venues.length - 5} more...</li>
                                                     )}
                                                 </ul>
                                             </>

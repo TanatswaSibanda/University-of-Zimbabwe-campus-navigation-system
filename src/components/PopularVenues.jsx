@@ -1,10 +1,12 @@
 const popularPlaces = [
-  "Admin Block",
+  "Administration Building",
   "Main Library",
-  "Student Union",
-  "Faculty of Science",
-  "Faculty of Vet Science",
-  "Computer Centre"
+  "Great Hall",
+  "CBZ Bank",
+  "Sports Pavilion",
+  "Student's Union Building",
+
+
 ];
 
 function PopularVenues({ onVenueClick }) {
