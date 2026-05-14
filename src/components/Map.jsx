@@ -1,29 +1,16 @@
-
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
-
-import {
-    MapContainer,
-    TileLayer,
-    Marker,
-    Popup
-} from "react-leaflet";
-
-import "leaflet/dist/leaflet.css";
-
-
 import logo from "../assets/images/University_of_Zimbabwe_LOGO.png";
-
 import "./Map.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PopularVenues from "./PopularVenues";
 import venues from "./venues";
+//import { loadAllBuildings } from "../services/firebaseService";
 import { useNavigate } from "react-router-dom";
-
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -52,13 +39,6 @@ function CoordPicker() {
     });
 
     if (!coords) return null;
-
-import venues from "../data/venues";
-
-export default function Map() {
-
-    const universityOfZimbabwe = [-17.7816, 31.0544];
-
 
     return (
         <div
@@ -103,10 +83,10 @@ function PanControls() {
 
     const panMap = (direction) => {
         const offset = {
-            up:    [0, -panAmount],
-            down:  [0,  panAmount],
-            left:  [-panAmount, 0],
-            right: [ panAmount, 0],
+            up: [0, -panAmount],
+            down: [0, panAmount],
+            left: [-panAmount, 0],
+            right: [panAmount, 0],
         };
         map.panBy(offset[direction]);
     };
@@ -146,15 +126,65 @@ export default function Map() {
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [locationError, setLocationError] = useState("");
     const [locating, setLocating] = useState(false);
+    const [showBuildingSelector, setShowBuildingSelector] = useState(false);
+    const [selectedStartBuilding, setSelectedStartBuilding] = useState("");
+    const [roomSearchQuery, setRoomSearchQuery] = useState("");
+    const [roomSearchResults, setRoomSearchResults] = useState([]);
+    const [showRoomResults, setShowRoomResults] = useState(false);
     const navigate = useNavigate();
 
-    const handleVenueClick = (venueName) => {
-        const destination = venues.find((v) => v.name === venueName);
+    const handleVenueClick = (venueName, isVenueOnly = false, parentBuilding = null) => {
+        // First try to find if it's a specific venue (room)
+        let destination = null;
+
+        if (isVenueOnly && parentBuilding) {
+            // User selected a specific venue inside a building
+            const building = venues.find(v => v.name === parentBuilding);
+            if (building) {
+                const venue = building.venues?.find(v => v.name === venueName);
+                if (venue) {
+                    destination = {
+                        name: venue.name,
+                        position: building.position,
+                        isVenue: true,
+                        parentBuilding: building.name,
+                        building: building
+                    };
+                }
+            }
+        } else {
+            // First try to find as a building
+            let building = venues.find(v => v.name === venueName);
+            if (building) {
+                destination = {
+                    name: building.name,
+                    position: building.position,
+                    isBuilding: true,
+                    building: building
+                };
+            } else {
+                // Then try to find as a venue inside any building
+                for (const building of venues) {
+                    const venue = building.venues?.find(v => v.name === venueName);
+                    if (venue) {
+                        destination = {
+                            name: venue.name,
+                            position: building.position,
+                            isVenue: true,
+                            parentBuilding: building.name,
+                            building: building
+                        };
+                        break;
+                    }
+                }
+            }
+        }
+
         if (!destination) return;
+
         setSelectedVenue(destination);
         setShowPopup(true);
     };
-
     const handleInputChange = (e) => {
         const value = e.target.value;
         setSearchQuery(value);
@@ -166,20 +196,45 @@ export default function Map() {
             return;
         }
 
+        const matches = [];
 
-        const matches = venues.filter((v) =>
-            v.name.toLowerCase().includes(value.toLowerCase())
-        );
+        // Search buildings
+        venues.forEach((building) => {
+            if (building.name.toLowerCase().includes(value.toLowerCase())) {
+                matches.push({
+                    name: building.name,
+                    type: 'building',
+                    building: building.name
+                });
+            }
+            // Search venues inside building
+            building.venues?.forEach((venue) => {
+                if (venue.name.toLowerCase().includes(value.toLowerCase())) {
+                    matches.push({
+                        name: venue.name,
+                        type: 'venue',
+                        building: building.name,
+                        parentBuilding: building.name
+                    });
+                }
+            });
+        });
+
         setSuggestions(matches);
         setShowSuggestions(matches.length > 0);
     };
 
-    const handleSuggestionClick = (venue) => {
-        setSearchQuery(venue.name);
+    const handleSuggestionClick = (item, type, parentBuilding = null) => {
+        setSearchQuery(item);
         setSuggestions([]);
         setShowSuggestions(false);
         setSearchError("");
-        handleVenueClick(venue.name);
+
+        if (type === 'venue') {
+            handleVenueClick(item, true, parentBuilding);
+        } else {
+            handleVenueClick(item);
+        }
     };
 
     const handleSearch = () => {
@@ -187,7 +242,6 @@ export default function Map() {
         setSuggestions([]);
         setShowSuggestions(false);
 
-        // Empty input check
         if (searchQuery.trim() === "") {
             setSearchError("Please enter a building name to search.");
             return;
@@ -251,7 +305,19 @@ export default function Map() {
     const handleSelectStartingPoint = () => {
         setShowPopup(false);
         setLocationError("");
-        setIsSelectingStart(true);
+        setShowBuildingSelector(true);
+    };
+
+    const handleBuildingSelect = (building) => {
+        setShowBuildingSelector(false);
+        setSelectedStartBuilding("");
+        navigate("/navigation", {
+            state: {
+                start: building.position,
+                destination: selectedVenue,
+                startBuildingName: building.name
+            }
+        });
     };
 
     const handleMapClick = (coords) => {
@@ -261,22 +327,69 @@ export default function Map() {
         });
     };
 
+    const handleRoomSearch = () => {
+        if (!roomSearchQuery.trim()) {
+            setRoomSearchResults([]);
+            setShowRoomResults(false);
+            return;
+        }
+
+        const results = [];
+        venues.forEach(venue => {
+            if (venue.rooms && venue.rooms.length > 0) {
+                venue.rooms.forEach(room => {
+                    if (room.name.toLowerCase().includes(roomSearchQuery.toLowerCase()) ||
+                        (room.description && room.description.toLowerCase().includes(roomSearchQuery.toLowerCase()))) {
+                        results.push({
+                            building: venue.name,
+                            buildingPosition: venue.position,
+                            room: room,
+                            venue: venue
+                        });
+                    }
+                });
+            }
+        });
+
+        setRoomSearchResults(results);
+        setShowRoomResults(results.length > 0);
+
+        if (results.length === 0 && roomSearchQuery.trim() !== "") {
+            alert(`No room found matching "${roomSearchQuery}"`);
+        }
+    };
+
+    const handleRoomResultClick = (result) => {
+        setSelectedVenue({
+            name: result.building,
+            position: result.buildingPosition,
+            room: result.room,
+            venue: result.venue
+        });
+        setRoomSearchResults([]);
+        setShowRoomResults(false);
+        setRoomSearchQuery("");
+        setShowPopup(true);
+    };
+    /*useEffect(() => {
+        const loadBuildingsFromFirebase = async () => {
+            const buildings = await loadAllBuildings();
+            if (buildings.length > 0) {
+                // Option 1: Use Firebase data instead of static venues
+                console.log("Loaded buildings:", buildings);
+                // You can merge with static data or replace entirely
+            }
+        };
+        loadBuildingsFromFirebase();
+    }, []);*/
+
     return (
         <div className="map-container">
-
             {/* HEADER */}
-
             <div className="header">
-                <img
-                    src={logo}
-                    alt="University of Zimbabwe Logo"
-                />
-
-                <h2>
-                    University of Zimbabwe Campus Navigator
-                </h2>
+                <img src={logo} alt="University of Zimbabwe Logo" />
+                <h2>University of Zimbabwe Campus Navigator</h2>
             </div>
-
 
             <div className="content-layout">
                 <PopularVenues onVenueClick={handleVenueClick} />
@@ -288,13 +401,14 @@ export default function Map() {
                         </div>
                     )}
 
-                    {/* SEARCH BAR + DROPDOWN */}
+                    {/* SEARCH WRAPPER */}
                     <div className="search-wrapper">
+                        {/* BUILDING SEARCH */}
                         <div className="search-container">
                             <input
                                 className="search-bar"
                                 type="text"
-                                placeholder="Search for a building e.g Beit Hall"
+                                placeholder=" Search for a building e.g. Beit Hall"
                                 value={searchQuery}
                                 onChange={handleInputChange}
                                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -321,102 +435,100 @@ export default function Map() {
                             </div>
                         )}
 
-            {/* SEARCH BAR */}
-            <div className="search-container">
-
-                <input
-                    className="search-bar"
-                    type="text"
-                    placeholder="Search for a building"
-                />
-
-                <button className="search-button">
-                    Search
-                </button>
-
-            </div>
-
-            {/* MAP */}
-            <MapContainer
-                center={universityOfZimbabwe}
-                zoom={16}
-                style={{
-                    height: "400px",
-                    width: "100%"
-                }}
-            >
-
-
                         {searchError && (
                             <div className="search-error">
                                 ⚠️ {searchError}
                             </div>
                         )}
-                    </div>
 
-
-                    {/* MODAL */}
-                    {showPopup && (
-                        <div className="custom-popup">
-                            <div className="popup-box">
-                                <h3>Select Navigation Option</h3>
-
-                                <button
-                                    onClick={handleUseCurrentLocation}
-                                    disabled={locating}
-                                    style={{ opacity: locating ? 0.7 : 1 }}
-                                >
-                                    {locating ? "⏳ Getting location..." : "📍 Use Current Location"}
-                                </button>
-
-                                {locationError && (
-                                    <div style={{
-                                        background: "#fee2e2",
-                                        color: "#991b1b",
-                                        padding: "8px 10px",
-                                        borderRadius: "6px",
-                                        fontSize: "0.82rem",
-                                        marginTop: "8px",
-                                        textAlign: "left"
-                                    }}>
-                                        ⚠️ {locationError}
-                                    </div>
-                                )}
-
-                                <button onClick={handleSelectStartingPoint}>
-                                    🗺️ Select Starting Point
-                                </button>
-
-                                <button
-                                    onClick={() => {
-                                        setShowPopup(false);
-                                        setLocationError("");
-                                    }}
-                                    style={{
-                                        background: "transparent",
-                                        color: "#666",
-                                        border: "1px solid #ddd",
-                                        marginTop: "6px"
-                                    }}
-                                >
-                                    Cancel
+                        {/* ROOM SEARCH SECTION */}
+                        <div className="room-search-section">
+                            <div className="room-search-container">
+                                <input
+                                    className="room-search-bar"
+                                    type="text"
+                                    placeholder=" Search for a specific room (e.g., 'Chemistry Lab')"
+                                    value={roomSearchQuery}
+                                    onChange={(e) => setRoomSearchQuery(e.target.value)}
+                                    onKeyDown={(e) => e.key === "Enter" && handleRoomSearch()}
+                                    autoComplete="off"
+                                />
+                                <button className="room-search-button" onClick={handleRoomSearch}>
+                                    Find Room
                                 </button>
                             </div>
-                        </div>
-                    )}
 
+                            {showRoomResults && roomSearchResults.length > 0 && (
+                                <div className="room-results-dropdown">
+                                    <div className="room-results-header">
+                                        <span>🎯 Found {roomSearchResults.length} room(s):</span>
+                                        <button onClick={() => {
+                                            setShowRoomResults(false);
+                                            setRoomSearchResults([]);
+                                        }}>✕</button>
+                                    </div>
+                                    {roomSearchResults.map((result, idx) => (
+                                        <div
+                                            key={idx}
+                                            className="room-result-item"
+                                            onClick={() => handleRoomResultClick(result)}
+                                        >
+                                            <div className="room-icon">🚪</div>
+                                            <div className="room-info">
+                                                <div className="room-name">{result.room.name}</div>
+                                                <div className="room-building">📍 {result.building}</div>
+                                                {result.room.description && (
+                                                    <div className="room-description">{result.room.description}</div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* MAP */}
                     <MapContainer
                         center={universityOfZimbabwe}
                         zoom={17}
-                        style={{ height: "100%", width: "100%" }}
+                        style={{ height: "450px", width: "100%" }}
                     >
                         <TileLayer
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             attribution="© OpenStreetMap contributors"
                         />
+
+                        {venues.map((venue, index) => (
+                            <Marker key={index} position={venue.position}>
+                                <Popup>
+                                    <div className="venue-popup">
+                                        <h3>{venue.name}</h3>
+                                        {venue.rooms && venue.rooms.length > 0 && (
+                                            <>
+                                                <p><strong>📚 Rooms/Facilities:</strong></p>
+                                                <ul className="rooms-list">
+                                                    {venue.rooms.slice(0, 5).map((room, roomIndex) => (
+                                                        <li key={roomIndex}>
+                                                            <strong>{room.name}</strong>
+                                                            {room.description && <span> - {room.description}</span>}
+                                                        </li>
+                                                    ))}
+                                                    {venue.rooms.length > 5 && (
+                                                        <li>+ {venue.rooms.length - 5} more...</li>
+                                                    )}
+                                                </ul>
+                                            </>
+                                        )}
+                                    </div>
+                                </Popup>
+                            </Marker>
+                        ))}
+
                         <Marker position={universityOfZimbabwe}>
                             <Popup>University of Zimbabwe<br />Main Campus</Popup>
                         </Marker>
+
                         <MapClickHandler
                             onMapClick={handleMapClick}
                             isSelectingStart={isSelectingStart}
@@ -424,46 +536,89 @@ export default function Map() {
                         <CoordPicker />
                         <PanControls />
                     </MapContainer>
+
+                    {/* BUILDING SELECTOR MODAL */}
+                    {showBuildingSelector && (
+                        <div className="building-selector-overlay">
+                            <div className="building-selector-modal">
+                                <h3>🏛️ Select Starting Building</h3>
+                                <p className="modal-subtitle">Choose a building to start navigation from</p>
+                                <select
+                                    className="building-dropdown"
+                                    value={selectedStartBuilding}
+                                    onChange={(e) => {
+                                        const building = venues.find(v => v.name === e.target.value);
+                                        if (building) handleBuildingSelect(building);
+                                    }}
+                                >
+                                    <option value="">-- Choose a building --</option>
+                                    {venues.map((venue, idx) => (
+                                        <option key={idx} value={venue.name}>
+                                            🏛️ {venue.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button
+                                    className="cancel-button"
+                                    onClick={() => setShowBuildingSelector(false)}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* NAVIGATION OPTION MODAL */}
+                    {showPopup && selectedVenue && (
+                        <div className="custom-popup">
+                            <div className="popup-box">
+                                <h3>📍 {selectedVenue.name}</h3>
+                                {selectedVenue.room && (
+                                    <div className="selected-room-info">
+                                        <strong>Room: {selectedVenue.room.name}</strong>
+                                        {selectedVenue.room.description && (
+                                            <p>{selectedVenue.room.description}</p>
+                                        )}
+                                    </div>
+                                )}
+                                <h4>Select Navigation Option</h4>
+
+                                <button
+                                    className="nav-option-btn current-location"
+                                    onClick={handleUseCurrentLocation}
+                                    disabled={locating}
+                                >
+                                    {locating ? "⏳ Getting location..." : "📍 Use My Current Location"}
+                                </button>
+
+                                <button
+                                    className="nav-option-btn select-start"
+                                    onClick={handleSelectStartingPoint}
+                                >
+                                    🗺️ Select Starting Building
+                                </button>
+
+                                {locationError && (
+                                    <div className="location-error">
+                                        ⚠️ {locationError}
+                                    </div>
+                                )}
+
+                                <button
+                                    className="cancel-btn"
+                                    onClick={() => {
+                                        setShowPopup(false);
+                                        setLocationError("");
+                                        setSelectedVenue(null);
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
-
-                {/* LOOP THROUGH VENUES */}
-                {venues.map((venue, index) => (
-
-                    <Marker
-                        key={index}
-                        position={venue.position}
-                    >
-
-                        <Popup>
-
-                            <h3>{venue.name}</h3>
-
-                            {venue.rooms.map((room, roomIndex) => (
-                                <div key={roomIndex}>
-
-                                    <strong>
-                                        {room.name}
-                                    </strong>
-
-                                    <p>
-                                        {room.description}
-                                    </p>
-
-                                    <hr />
-
-                                </div>
-                            ))}
-
-                        </Popup>
-
-                    </Marker>
-
-                ))}
-
-            </MapContainer>
-
-
         </div>
     );
 }

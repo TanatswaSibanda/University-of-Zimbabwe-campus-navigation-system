@@ -1,184 +1,282 @@
+// venues.js - University of Zimbabwe Buildings and Venues
+
 const venues = [
   {
-    name: "Admin Block",
-    position: [-17.7845, 31.0530],
-    rooms: [
-      { name: "Vice Chancellor's Office", description: "2nd floor, Room 201. Turn left at the top of the main staircase." },
-      { name: "Registrar's Office", description: "Ground floor, Room 105. First door on the right after the main entrance." },
-      { name: "Finance Office", description: "Ground floor, Room 110. Follow the corridor past the Registrar, last door on the left." },
-      { name: "Human Resources", description: "1st floor, Room 102. Take the staircase and turn right immediately." }
+    "name": "Faculty of Agriculture",
+    "position": [-17.7818724, 31.0508484],
+    "venues": [
+      { "name": "Agriculture Conference Hall (ACH)" },
+      { "name": "Agriculture Seminar Room 1 (ASR1)" }
     ]
   },
   {
-    name: "Main Library",
-    position: [-17.7848, 31.0525],
-    rooms: [
-      { name: "Reference Section", description: "Ground floor, straight ahead from the main entrance past the issue desk." },
-      { name: "Computer Lab", description: "1st floor, Room L101. Up the stairs, turn left, glass doors at the end." },
-      { name: "Periodicals Room", description: "Ground floor, right wing. Follow signs past the journal shelves." },
-      { name: "Silent Study Hall", description: "2nd floor. Take the lift or stairs — entire top floor is silent study." }
+    "name": "Mining",
+    "position": [-17.7826674, 31.0506276],
+    "venues": [
+      { "name": "Mining Engineering Seminar Room 1 (MINSR1)" }
     ]
   },
   {
-    name: "Student Union",
-    position: [-17.7850, 31.0518],
-    rooms: [
-      { name: "Cafeteria", description: "Ground floor, left wing. Large double doors at the end of the corridor." },
-      { name: "Games Room", description: "Ground floor, right wing. Room SU-04, next to the notice board." },
-      { name: "Student Council Office", description: "1st floor, Room SU-201. Up the stairs, first door on the right." },
-      { name: "ATM Lobby", description: "Ground floor, near main entrance on the right-hand side." }
+    "name": "Dept of Physics",
+    "position": [-17.7823505, 31.0517877],
+    "venues": [
+      { "name": "Space Science & Applied Physics Lab (SSAP)" }
     ]
   },
   {
-    name: "Faculty of Science",
-    position: [-17.7838, 31.0522],
-    rooms: [
-      { name: "Chemistry Lab", description: "Ground floor, Room SC-01. Enter through the side entrance, first lab on the left." },
-      { name: "Physics Lab", description: "1st floor, Room SC-101. Up the stairs, turn right, second door." },
-      { name: "Biology Lab", description: "Ground floor, Room SC-05. Follow the corridor to the end, turn left." },
-      { name: "Lecture Theatre A", description: "Ground floor, Room SC-LT1. Main entrance, large theatre straight ahead." }
+    "name": "Dept of Geology",
+    "position": [-17.782621, 31.0525225],
+    "venues": [
+      { "name": "Geology Lab (G2)" }
     ]
   },
   {
-    name: "Faculty of Engineering",
-    position: [-17.7835, 31.0535],
-    rooms: [
-      { name: "Civil Engineering Lab", description: "Ground floor, Room EN-01. Left wing from the main entrance." },
-      { name: "Electrical Engineering Lab", description: "1st floor, Room EN-101. Up the stairs, turn right." },
-      { name: "Mechanical Workshop", description: "Ground floor, rear of building. Follow signs from the main corridor." },
-      { name: "Dean's Office", description: "2nd floor, Room EN-201. Top of the stairs, corner office." }
+    "name": "Dept of Geography & Environmental Science",
+    "position": [-17.7824916, 31.0531213],
+    "venues": [
+      { "name": "Geography Lab 1 (GLB)" },
+      { "name": "Science Lecture Theatre (SLT)" }
     ]
   },
   {
-    name: "Faculty of Law",
-    position: [-17.7852, 31.0510],
-    rooms: [
-      { name: "Moot Court", description: "Ground floor, Room LW-01. Enter main doors, court room is immediately on the left." },
-      { name: "Law Library", description: "1st floor. Up the stairs, entire floor is the law library." },
-      { name: "Lecture Theatre", description: "Ground floor, Room LW-LT1. Straight ahead from the main entrance." },
-      { name: "Dean's Office", description: "2nd floor, Room LW-201. Top of the stairs, first door on the right." }
+    "name": "Rural and Urban Planning",
+    "position": [-17.7827007, 31.0531211],
+    "venues": [
+      { "name": "Rural & Urban Planning Studio 1 (STD1)" },
+      { "name": "Rural & Urban Planning Studio 2 (ST2)" },
+      { "name": "Rural & Urban Planning Lecture Room 6 (PA6)" }
     ]
   },
   {
-    name: "Faculty of Commerce",
-    position: [-17.7843, 31.0515],
-    rooms: [
-      { name: "Accountancy Department", description: "1st floor, Room CM-101. Up the main stairs, turn left." },
-      { name: "Economics Department", description: "1st floor, Room CM-105. Up the main stairs, turn right." },
-      { name: "Lecture Theatre", description: "Ground floor, Room CM-LT1. Main entrance, straight ahead." },
-      { name: "Dean's Office", description: "2nd floor, Room CM-201. Corner office at the top of the stairs." }
+    "name": "Statistics",
+    "position": [-17.7834826, 31.0506746],
+    "venues": [
+      { "name": "Mathematics Seminar Room 5 (MTSR5)" }
     ]
   },
   {
-    name: "Faculty of Education",
-    position: [-17.7858, 31.0528],
-    rooms: [
-      { name: "Educational Psychology Lab", description: "Ground floor, Room ED-01. Left wing from the main entrance." },
-      { name: "Curriculum Studies Office", description: "1st floor, Room ED-102. Up the stairs, second door on the left." },
-      { name: "Lecture Theatre", description: "Ground floor, Room ED-LT1. Straight ahead from the main entrance." },
-      { name: "Dean's Office", description: "2nd floor, Room ED-201. Top of the stairs, turn right." }
+    "name": "Computer Science",
+    "position": [-17.7831733, 31.0508704],
+    "venues": [
+      { "name": "Computer Science Hardware Lab (CTHL)" },
+      { "name": "HLT500" }
     ]
   },
   {
-    name: "Faculty of Arts",
-    position: [-17.7841, 31.0508],
-    rooms: [
-      { name: "History Department", description: "1st floor, Room AR-101. Up the stairs, first door on the left." },
-      { name: "Linguistics Department", description: "1st floor, Room AR-105. Up the stairs, third door on the right." },
-      { name: "Lecture Theatre", description: "Ground floor, Room AR-LT1. Main entrance, straight ahead." },
-      { name: "Dean's Office", description: "2nd floor, Room AR-201. Top of the stairs, corner office." }
+    "name": "IES, Computer Science",
+    "position": [-17.7831472, 31.0511681],
+    "venues": []
+  },
+  {
+    "name": "Maths and Chemistry",
+    "position": [-17.7830837, 31.0515573],
+    "venues": [
+      { "name": "Chemistry Lab G2" },
+      { "name": "Science Seminar Rooms (SCI-SMR1)" }
     ]
   },
   {
-    name: "Faculty of Vet Science",
-    position: [-17.7860, 31.0535],
-    rooms: [
-      { name: "Anatomy Lab", description: "Ground floor, Room VS-01. Left wing of the building, follow signs from reception." },
-      { name: "Clinical Skills Lab", description: "Ground floor, Room VS-03. Right wing, double doors at the far end." },
-      { name: "Lecture Theatre", description: "1st floor, Room VS-LT1. Up the main staircase, theatre faces you at the top." },
-      { name: "Animal Holding Area", description: "Behind the main building. Exit through the rear door and follow the path." }
+    "name": "UZ Computer Centre",
+    "position": [-17.7835941, 31.051004],
+    "venues": [
+      { "name": "Main Computer Lab" }
     ]
   },
   {
-    name: "Faculty of Agriculture",
-    position: [-17.7862, 31.0520],
-    rooms: [
-      { name: "Soil Science Lab", description: "Ground floor, Room AG-01. Right wing from the main entrance." },
-      { name: "Plant Sciences Lab", description: "Ground floor, Room AG-03. Left wing, last door at the end." },
-      { name: "Lecture Theatre", description: "Ground floor, Room AG-LT1. Straight ahead from the main entrance." },
-      { name: "Dean's Office", description: "1st floor, Room AG-101. Up the stairs, first door on the right." }
+    "name": "Wildlife Section",
+    "position": [-17.783668, 31.05122],
+    "venues": [
+      { "name": "Biological Science Lab (BSD2)" }
     ]
   },
   {
-    name: "Faculty of Social Sciences",
-    position: [-17.7847, 31.0505],
-    rooms: [
-      { name: "Psychology Lab", description: "Ground floor, Room SS-01. Left wing from the main entrance." },
-      { name: "Sociology Department", description: "1st floor, Room SS-101. Up the stairs, turn left." },
-      { name: "Lecture Theatre", description: "Ground floor, Room SS-LT1. Straight ahead from the main entrance." },
-      { name: "Dean's Office", description: "2nd floor, Room SS-201. Top of the stairs, corner office." }
+    "name": "Survey",
+    "position": [-17.7830858, 31.0525959],
+    "venues": [
+      { "name": "Surveying Seminar Room 1 (SURSR1)" },
+      { "name": "Surveying Seminar Room 3 (SSR3)" }
     ]
   },
   {
-    name: "Beit Hall",
-    position: [-17.7830, 31.0528],
-    rooms: [
-      { name: "Main Hall", description: "Ground floor. Enter through the main double doors straight ahead." },
-      { name: "Common Room", description: "Ground floor, right wing. Follow the corridor from the main entrance." },
-      { name: "Warden's Office", description: "Ground floor, Room BH-01. First door on the left after the entrance." },
-      { name: "Laundry Room", description: "Basement level. Take the stairs down from the main corridor." }
+    "name": "Zoology and Biology",
+    "position": [-17.7831908, 31.0521347],
+    "venues": [
+      { "name": "Biological Science Lab (BSD2)" }
     ]
   },
   {
-    name: "Swinton Hall",
-    position: [-17.7833, 31.0515],
-    rooms: [
-      { name: "Main Hall", description: "Ground floor. Enter through the main double doors straight ahead." },
-      { name: "Common Room", description: "Ground floor, left wing. Follow the corridor from the main entrance." },
-      { name: "Warden's Office", description: "Ground floor, Room SW-01. First door on the right after the entrance." },
-      { name: "Study Room", description: "1st floor, Room SW-101. Up the stairs, turn left." }
+    "name": "Basketball Court",
+    "position": [-17.7839437, 31.0530484],
+    "venues": []
+  },
+  {
+    "name": "NLT 500",
+    "position": [-17.7833699, 31.0535798],
+    "venues": [
+      { "name": "NLT400 Main Theatre" }
     ]
   },
   {
-    name: "Manfred Hodson Hall",
-    position: [-17.7828, 31.0540],
-    rooms: [
-      { name: "Main Hall", description: "Ground floor. Enter through the main double doors straight ahead." },
-      { name: "Common Room", description: "Ground floor, right wing. Large room at the end of the corridor." },
-      { name: "Warden's Office", description: "Ground floor, Room MH-01. First door on the left after the entrance." },
-      { name: "Study Room", description: "1st floor. Up the stairs, entire floor has study desks." }
+    "name": "Senior Common Room",
+    "position": [-17.7833729, 31.0541901],
+    "venues": []
+  },
+  {
+    "name": "Students Union Dining",
+    "position": [-17.7829324, 31.0547949],
+    "venues": [
+      { "name": "Main Dining Hall" }
     ]
   },
   {
-    name: "Sports Pavilion",
-    position: [-17.7820, 31.0545],
-    rooms: [
-      { name: "Changing Rooms", description: "Ground floor, both wings. Male on the left, female on the right." },
-      { name: "Gym", description: "Ground floor, rear of building. Follow signs from the main entrance." },
-      { name: "Sports Office", description: "Ground floor, Room SP-01. First door on the right at the entrance." },
-      { name: "Equipment Store", description: "Ground floor, Room SP-05. Last door at the end of the left corridor." }
+    "name": "Student's Union Building",
+    "position": [-17.7827258, 31.0548129],
+    "venues": [
+      { "name": "SUB Main Hall" }
     ]
   },
   {
-    name: "Health Centre",
-    position: [-17.7855, 31.0515],
-    rooms: [
-      { name: "Reception", description: "Ground floor. Walk straight in through the main entrance." },
-      { name: "Consultation Rooms", description: "Ground floor, right wing. Rooms HC-01 to HC-05 along the corridor." },
-      { name: "Pharmacy", description: "Ground floor, left wing. Room HC-10, follow signs from reception." },
-      { name: "Waiting Area", description: "Ground floor. Large seating area immediately inside the main entrance." }
+    "name": "Students Union Hall",
+    "position": [-17.7825073, 31.0548367],
+    "venues": [
+      { "name": "SU Events Hall" }
     ]
   },
   {
-    name: "Computer Centre",
-    position: [-17.7842, 31.0533],
-    rooms: [
-      { name: "Lab 1", description: "Ground floor, Room CC-01. First lab on the left after the entrance." },
-      { name: "Lab 2", description: "Ground floor, Room CC-02. Second lab on the left." },
-      { name: "Server Room", description: "Ground floor, Room CC-10. Restricted access — contact IT staff." },
-      { name: "Help Desk", description: "Ground floor, Reception area. Straight ahead from the main entrance." }
+    "name": "Beit Hall",
+    "position": [-17.7825816, 31.0538765],
+    "venues": [
+      { "name": "Beit Hall Main Hall" }
+    ]
+  },
+  {
+    "name": "Sports Pavilion",
+    "position": [-17.7850189, 31.0537441],
+    "venues": []
+  },
+  {
+    "name": "Faculty of Science",
+    "position": [-17.7843269, 31.0506063],
+    "venues": [
+      { "name": "Faculty of Social & Behavioural Sciences Lab (FSBS)" }
+    ]
+  },
+  {
+    "name": "Diamond Lecture Theatre",
+    "position": [-17.7820388, 31.0525951],
+    "venues": [
+      { "name": "Diamond Main Theatre" }
+    ]
+  },
+  {
+    "name": "Chapel",
+    "position": [-17.78287645811501, 31.05698072595309],
+    "venues": []
+  },
+  {
+    "name": "CBZ Bank",
+    "position": [-17.78229645721664, 31.05612654326619],
+    "venues": []
+  },
+  {
+    "name": "New Hall",
+    "position": [-17.781407826784175, 31.058676278543647],
+    "venues": [
+      { "name": "New Hall Main Venue" }
+    ]
+  },
+  {
+    "name": "Manfred Hostel",
+    "position": [-17.781336382455727, 31.057760930396395],
+    "venues": []
+  },
+  {
+    "name": "NC5 Hostel",
+    "position": [-17.780732443426974, 31.059361966723483],
+    "venues": []
+  },
+  {
+    "name": "Great Hall",
+    "position": [-17.78079538083827, 31.0541659185905],
+    "venues": [
+      { "name": "Great Hall Main Arena" },
+      { "name": "Great Hall Mezzanine" }
+    ]
+  },
+  {
+    "name": "Main Library",
+    "position": [-17.780606897933566, 31.05357893020775],
+    "venues": [
+      { "name": "Library Reference Section" },
+      { "name": "Library Computer Lab" }
+    ]
+  },
+  {
+    "name": "Administration Block",
+    "position": [-17.781406324059084, 31.054008933325346],
+    "venues": []
+  },
+  {
+    "name": "Social Sciences Department",
+    "position": [-17.780512310470026, 31.05220814520321],
+    "venues": [
+      { "name": "Llewellyn Lecture Room G1 (LLG1)" },
+      { "name": "Llewellyn Lecture Room G2 (LLG2)" },
+      { "name": "Llewellyn Lecture Room G3 (LLG3)" },
+      { "name": "Llewellyn Lecture Room F1 (LLF1)" },
+      { "name": "Llewellyn Hall Mezzanine (LHMEZZ)" }
+    ]
+  },
+  {
+    "name": "LTI",
+    "position": [-17.780346738533048, 31.052453154277238],
+    "venues": [
+      { "name": "LTI Main Hall" }
+    ]
+  },
+  {
+    "name": "LTII",
+    "position": [-17.780368205831522, 31.05245859426375],
+    "venues": [
+      { "name": "LTII Main Hall" }
+    ]
+  },
+  {
+    "name": "Faculty of Engineering",
+    "position": [-17.7820, 31.0545],
+    "venues": [
+      { "name": "Timber Lecture Room (TLR)" },
+      { "name": "Drawing Office (DO)" },
+      { "name": "Industrial & Mechanical SR1 (IME SR1)" },
+      { "name": "Industrial & Mechanical SR2 (IME SR2)" }
     ]
   }
 ];
+
+// Helper function to search for a venue by name
+export const searchVenue = (query) => {
+  const results = [];
+  venues.forEach(building => {
+    if (building.name.toLowerCase().includes(query.toLowerCase())) {
+      results.push({
+        building: building.name,
+        buildingPosition: building.position,
+        venue: { name: "Main Building" },
+        buildingObj: building
+      });
+    }
+    building.venues?.forEach(venue => {
+      if (venue.name.toLowerCase().includes(query.toLowerCase())) {
+        results.push({
+          building: building.name,
+          buildingPosition: building.position,
+          venue: venue,
+          buildingObj: building
+        });
+      }
+    });
+  });
+  return results;
+};
 
 export default venues;
