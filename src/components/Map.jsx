@@ -355,7 +355,7 @@ export default function Map() {
                             <input
                                 className="search-bar"
                                 type="text"
-                                placeholder="🔍 Search for a building or room... (e.g., 'Great Hall', 'Chemistry Lab')"
+                                placeholder="Search for a building or room(e.g. Great Hall or NLT500 )"
                                 value={searchQuery}
                                 onChange={handleInputChange}
                                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -395,7 +395,7 @@ export default function Map() {
                     <MapContainer
                         center={universityOfZimbabwe}
                         zoom={17}
-                        style={{ height: "450px", width: "100%" }}
+                        style={{ height: "100%", width: "100%" }}
                     >
                         <TileLayer
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -409,7 +409,7 @@ export default function Map() {
                                         <h3>{venue.name}</h3>
                                         {venue.venues && venue.venues.length > 0 && (
                                             <>
-                                                <p><strong>📚 Venues/Facilities:</strong></p>
+                                                <p><strong>Venues/Facilities:</strong></p>
                                                 <ul className="rooms-list">
                                                     {venue.venues.slice(0, 5).map((venueItem, venueIndex) => (
                                                         <li key={venueIndex}>
@@ -497,7 +497,7 @@ export default function Map() {
                                     className="nav-option-btn select-start"
                                     onClick={handleSelectStartingPoint}
                                 >
-                                    🗺️ Select Starting Building
+                                    Select Starting Building
                                 </button>
 
                                 {locationError && (

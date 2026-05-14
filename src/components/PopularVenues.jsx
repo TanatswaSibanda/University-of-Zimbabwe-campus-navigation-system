@@ -1,10 +1,14 @@
 const popularPlaces = [
-  "Administration Building",
+  "Administration Block",
   "Main Library",
   "Great Hall",
   "CBZ Bank",
   "Sports Pavilion",
   "Student's Union Building",
+  "Beit Hall",
+  "Faculty of Science",
+  "Diamond Lecture Theatre",
+
 
 
 ];

@@ -214,7 +214,10 @@ const venues = [
   {
     "name": "Administration Block",
     "position": [-17.781406324059084, 31.054008933325346],
-    "venues": []
+    "venues": [
+      { "name": "Cash Office" },
+
+    ]
   },
   {
     "name": "Social Sciences Department",
