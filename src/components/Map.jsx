@@ -127,6 +127,9 @@ export default function Map() {
     const [locating, setLocating] = useState(false);
     const [showBuildingSelector, setShowBuildingSelector] = useState(false);
     const [selectedStartBuilding, setSelectedStartBuilding] = useState("");
+    const [nearbyBuildings, setNearbyBuildings] = useState([]);
+    const [showNearby, setShowNearby] = useState(false);
+    const [isLocatingNearby, setIsLocatingNearby] = useState(false);
     const navigate = useNavigate();
 
     const handleVenueClick = (venueName, isVenueOnly = false, parentBuilding = null) => {
@@ -238,7 +241,6 @@ export default function Map() {
             return;
         }
 
-        // First try as building
         let match = venues.find((v) =>
             v.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
@@ -248,7 +250,6 @@ export default function Map() {
             return;
         }
 
-        // Then try as venue inside any building
         for (const building of venues) {
             const venueMatch = building.venues?.find(v =>
                 v.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -332,6 +333,80 @@ export default function Map() {
         });
     };
 
+    // Find nearby buildings based on current location
+    const findNearbyBuildings = (lat, lng) => {
+        const nearby = [];
+
+        for (const building of venues) {
+            if (building.position && building.position.length === 2) {
+                // Calculate rough distance in meters
+                const latDiff = (lat - building.position[0]) * 111320;
+                const lngDiff = (lng - building.position[1]) * 85390;
+                const distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
+
+                if (distance < 200) { // Only show buildings within 200 meters
+                    nearby.push({
+                        ...building,
+                        distance: Math.round(distance)
+                    });
+                }
+            }
+        }
+
+        // Sort by distance (closest first)
+        return nearby.sort((a, b) => a.distance - b.distance).slice(0, 6);
+    };
+
+    // Handle nearby buildings button click
+    const handleFindNearby = () => {
+        console.log("Find Nearby clicked"); // Debug log
+
+        if (!navigator.geolocation) {
+            alert("Your browser doesn't support geolocation");
+            return;
+        }
+
+        setIsLocatingNearby(true);
+        setShowNearby(false); // Clear previous results
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                console.log("Got position:", position.coords.latitude, position.coords.longitude);
+                const userCoords = [position.coords.latitude, position.coords.longitude];
+                const nearby = findNearbyBuildings(userCoords[0], userCoords[1]);
+                console.log("Nearby buildings found:", nearby.length);
+
+                setNearbyBuildings(nearby);
+                setShowNearby(true);
+                setIsLocatingNearby(false);
+
+                if (nearby.length === 0) {
+                    alert("No buildings found within 200 meters of your location. Try moving closer to campus buildings.");
+                }
+            },
+            (error) => {
+                console.error("Location error:", error);
+                let errorMessage = "Could not get your location. ";
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage += "Please enable location access in your browser.";
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage += "Location information is unavailable.";
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage += "Location request timed out. Please try again.";
+                        break;
+                    default:
+                        errorMessage += "Please check your location settings.";
+                }
+                alert(errorMessage);
+                setIsLocatingNearby(false);
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    };
+
     return (
         <div className="map-container">
             <div className="header">
@@ -340,7 +415,14 @@ export default function Map() {
             </div>
 
             <div className="content-layout">
-                <PopularVenues onVenueClick={handleVenueClick} />
+                <PopularVenues
+                    onVenueClick={handleVenueClick}
+                    onFindNearby={handleFindNearby}
+                    showNearby={showNearby}
+                    setShowNearby={setShowNearby}
+                    nearbyBuildings={nearbyBuildings}
+                    isLocatingNearby={isLocatingNearby}
+                />
 
                 <div className="map-section">
                     {isSelectingStart && (
@@ -349,13 +431,13 @@ export default function Map() {
                         </div>
                     )}
 
-                    {/* SINGLE SEARCH BAR - Searches Buildings AND Venues */}
+                    {/* SINGLE SEARCH BAR */}
                     <div className="search-wrapper">
                         <div className="search-container">
                             <input
                                 className="search-bar"
                                 type="text"
-                                placeholder="Search for a building or room(e.g. Great Hall or NLT500 )"
+                                placeholder="Search for a building or room (e.g. Great Hall or NLT500)"
                                 value={searchQuery}
                                 onChange={handleInputChange}
                                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
